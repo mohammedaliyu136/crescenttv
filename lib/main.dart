@@ -1,4 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import 'api/api_provider.dart';
+import 'detail_page.dart';
+import 'headline.dart';
+import 'headline2.dart';
+import 'model/ResponseArticles.dart';
+import 'testtt0.dart';
 
 void main() => runApp(MyApp());
 
@@ -20,7 +28,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: Headline2(),//MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
@@ -45,6 +53,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  Future<ResponseArticles> headlinesNews = ApiProvider().getTopHeadlinesNews();
 
   void _incrementCounter() {
     setState(() {
@@ -74,34 +83,66 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-            ),
-          ],
+        child: Container(child:
+        FutureBuilder<ResponseArticles>(
+          future: headlinesNews,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return ListView.builder(
+                itemCount: snapshot.data.totalResults,
+                itemBuilder: (BuildContext context, index) => GestureDetector(
+                  onTap: () async {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => DetailPage(snapshot.data.articles[index])),
+                    );
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                    child: Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ListTile(
+                          //title: Text(snapshot.data[index].name),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              //Text(snapshot.data[index].location.toString()),
+                              //Row(
+                              //  children: <Widget>[
+                              //    Icon(Icons.phone, size: 15,),
+                              //    Text(snapshot.data[index].phone_number.toString()),
+
+                              //  ],
+                              //),
+                              Text(snapshot.data.articles[index].title,
+                                  style: TextStyle(
+                                    color: Colors.black87,
+                                    fontSize: 18.0,
+                                    fontWeight: FontWeight.bold,
+                                  )),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            } else if (snapshot.hasError) {
+              return Text("${snapshot.error}");
+            }
+
+            // By default, show a loading spinner.
+            return CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(Color.fromRGBO(128, 0, 128, 1)),);
+          },
+        ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
+        onPressed: (){
+          _incrementCounter;
+          },
         tooltip: 'Increment',
         child: Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
