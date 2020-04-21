@@ -51,6 +51,27 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
+  assets:
+    - assets/images/food.jpg
+    - assets/images/politics.jpg
+    - assets/images/science.jpg
+    - assets/images/sport.jpg
+    - assets/images/technology.jpg
+    - assets/images/travel.jpg
+    - assets/images/livestream.jpg
+
+  fonts:
+    - family: HelveticaNeue
+      fonts:
+        - asset: assets/fonts/HelveticaNeue.ttf
+    - family: HelveticaNeueThin
+      fonts:
+        - asset: assets/fonts/HelveticaNeueThin.ttf
+    - family: HelveticaNeueBold
+      fonts:
+        - asset: assets/fonts/HelveticaNeueBold.ttf
+
+
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg
